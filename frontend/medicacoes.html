@@ -1,61 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Medicações</title>
+
 <link rel="stylesheet" href="../css/style.css">
-  
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <h2>💊 Medicações Prescritas</h2>
+    <h2>Medicações Prescritas</h2>
 
-  <!-- IMPLEMENTADO: local onde a lista de medicações será exibida -->
-  <div id="listaMedicacoes"></div>
+    <div id="listaMedicacoes"></div>
 
 </div>
 
+
 <script>
 
-// IMPLEMENTADO: busca as consultas salvas e mostra as medicações
 function carregarMedicacoesPrescritas() {
-  fetch("/medicacoes")
-    .then(r => r.json())
-    .then(data => {
-      const div = document.getElementById("listaMedicacoes");
 
-      div.innerHTML = "";
+    fetch("/medicacoes")
 
-      if (data.length === 0) {
-        div.innerHTML = "<p>Nenhuma medicação prescrita.</p>";
-        return;
-      }
+        .then(r => r.json())
 
-      data.forEach(c => {
-        div.innerHTML += `
-          <div class="card">
-            <h3>${c.paciente}</h3>
+        .then(data => {
 
-            <p>
-              <b>Medicação:</b>
-              ${c.medicacao}
-            </p>
+            const div =
+                document.getElementById(
+                    "listaMedicacoes"
+                );
 
-            <p>
-              <b>Diagnóstico:</b>
-              ${c.diagnostico}
-            </p>
+            div.innerHTML = "";
 
-            <p>
-              <b>Observações:</b>
-              ${c.obs || "Nenhuma"}
-            </p>
-          </div>
-        `;
-      });
-    });
+
+            if (data.length === 0) {
+
+                div.innerHTML =
+                    "<p>Nenhuma medicação prescrita.</p>";
+
+                return;
+
+            }
+
+
+            data.forEach(c => {
+
+                div.innerHTML += `
+
+                    <div class="card">
+
+                        <h3>
+                            ${c.paciente}
+                        </h3>
+
+                        <p>
+                            <b>Medicação:</b>
+                            ${c.medicacao}
+                        </p>
+
+                        <p>
+                            <b>Diagnóstico:</b>
+                            ${c.diagnostico}
+                        </p>
+
+                        <p>
+                            <b>Observações:</b>
+                            ${c.obs || "Nenhuma"}
+                        </p>
+
+                    </div>
+
+                `;
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+            document.getElementById(
+                "listaMedicacoes"
+            ).innerHTML =
+                "<p>Erro ao carregar medicações.</p>";
+
+        });
+
 }
+
 
 carregarMedicacoesPrescritas();
 
