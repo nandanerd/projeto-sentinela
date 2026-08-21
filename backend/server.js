@@ -21,7 +21,7 @@ app.use(
         path.join(__dirname, "../frontend")
     )
 );
-
+app.use("/css", express.static(path.join(__dirname, "../css")));
 
 /* =========================
    BANCO DE DADOS
