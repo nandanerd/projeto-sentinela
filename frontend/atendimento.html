@@ -1,38 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
-<link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Atendimento</title>
+
+    <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
+
 <div class="container">
-<h2>Atendimento</h2>
 
-<input id="nome" placeholder="Nome">
-<input id="cpf" placeholder="CPF">
+    <h2>Atendimento</h2>
 
-<select id="tipo">
-  <option>Convenio</option>
-  <option>Particular</option>
-</select>
+    <input
+        type="text"
+        id="nome"
+        placeholder="Nome"
+    >
 
-<input type="file" id="foto">
+    <input
+        type="text"
+        id="cpf"
+        placeholder="CPF"
+    >
 
-<button onclick="cadastrar()">Cadastrar</button>
+    <select id="tipo">
+        <option value="Convenio">Convênio</option>
+        <option value="Particular">Particular</option>
+    </select>
+
+    <input
+        type="file"
+        id="foto"
+    >
+
+    <button onclick="cadastrar()">
+        Cadastrar
+    </button>
+
 </div>
 
 <script>
-function cadastrar(){
- fetch("http://localhost:3000/atendimento",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body: JSON.stringify({
-    nome: nome.value,
-    cpf: cpf.value,
-    tipo: tipo.value
-  })
- });
- alert("Paciente enviado para triagem");
+
+function cadastrar() {
+
+    const nome = document.getElementById("nome").value;
+    const cpf = document.getElementById("cpf").value;
+    const tipo = document.getElementById("tipo").value;
+
+    if (!nome || !cpf) {
+        alert("Preencha o nome e o CPF.");
+        return;
+    }
+
+    fetch("/atendimento", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            nome: nome,
+            cpf: cpf,
+            tipo: tipo
+        })
+
+    })
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Erro ao cadastrar paciente.");
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        console.log(data);
+
+        alert("Paciente enviado para triagem.");
+
+        document.getElementById("nome").value = "";
+        document.getElementById("cpf").value = "";
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+        alert(error.message);
+
+    });
+
 }
+
 </script>
+
 </body>
 </html>
