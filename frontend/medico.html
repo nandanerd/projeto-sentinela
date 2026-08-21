@@ -1,143 +1,301 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel Médico</title>
+
 <link rel="stylesheet" href="../css/style.css">
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <h2>🩺 Painel Médico</h2>
+    <h2>Painel Médico</h2>
 
-  <div id="triagens"></div>
+    <div id="triagens"></div>
 
-  <hr>
+    <hr>
 
-  <h3>Consulta</h3>
+    <h3>Consulta</h3>
 
-  <input id="paciente" placeholder="Paciente" readonly>
 
-  <input id="diagnostico" placeholder="Diagnóstico">
+    <input
+        id="paciente"
+        placeholder="Paciente"
+        readonly
+    >
 
-  <select id="medicacao">
-    <option value="">Selecione a medicação</option>
-  </select>
 
-  <textarea id="obs" placeholder="Observações"></textarea>
+    <input
+        id="diagnostico"
+        placeholder="Diagnóstico"
+    >
 
-  <button onclick="salvar()">Salvar</button>
+
+    <select id="medicacao">
+
+        <option value="">
+            Selecione a medicação
+        </option>
+
+    </select>
+
+
+    <textarea
+        id="obs"
+        placeholder="Observações"
+    ></textarea>
+
+
+    <button onclick="salvar()">
+        Salvar
+    </button>
 
 </div>
+
 
 <script>
 
 let triagensCarregadas = [];
 
+
 function carregar() {
-  fetch("/triagens")
-    .then(r => r.json())
-    .then(data => {
-      triagensCarregadas = data;
 
-      const div = document.getElementById("triagens");
-      div.innerHTML = "";
+    fetch("/triagens")
 
-      data.forEach((t, index) => {
-        div.innerHTML += `
-          <div class="card">
-            <h3>${t.nome}</h3>
+        .then(r => r.json())
 
-            <p><b>Sintoma:</b> ${t.sintoma || "Não informado"}</p>
+        .then(data => {
 
-            <p><b>Temperatura:</b> ${t.temperatura || "Não informada"}°C</p>
+            triagensCarregadas = data;
 
-            <p>
-              <span class="${t.risco}">
-                ${t.risco}
-              </span>
-            </p>
+            const div =
+                document.getElementById("triagens");
 
-            <p><b>Alergia:</b> ${t.alergia || "Nenhuma"}</p>
+            div.innerHTML = "";
 
-            <p><b>Observação:</b> ${t.observacao || "Nenhuma"}</p>
 
-            <button onclick="selecionar(${index})">
-              Atender
-            </button>
-          </div>
-        `;
-      });
-    });
+            if (data.length === 0) {
+
+                div.innerHTML =
+                    "<p>Nenhuma triagem aguardando.</p>";
+
+                return;
+            }
+
+
+            data.forEach((t, index) => {
+
+                div.innerHTML += `
+
+                    <div class="card">
+
+                        <h3>${t.nome}</h3>
+
+                        <p>
+                            <b>Sintoma:</b>
+                            ${t.sintoma || "Não informado"}
+                        </p>
+
+                        <p>
+                            <b>Temperatura:</b>
+                            ${t.temperatura || "Não informada"}°C
+                        </p>
+
+                        <p>
+                            <b>Risco:</b>
+                            ${t.risco}
+                        </p>
+
+                        <p>
+                            <b>Alergia:</b>
+                            ${t.alergia || "Nenhuma"}
+                        </p>
+
+                        <p>
+                            <b>Observação:</b>
+                            ${t.observacao || "Nenhuma"}
+                        </p>
+
+                        <button onclick="selecionar(${index})">
+                            Atender
+                        </button>
+
+                    </div>
+                `;
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+        });
+
 }
+
 
 function selecionar(index) {
-  const t = triagensCarregadas[index];
 
-  document.getElementById("paciente").value = t.nome;
-  document.getElementById("obs").value = t.observacao || "";
+    const t =
+        triagensCarregadas[index];
 
-  if (t.alergia && t.alergia !== "Nenhuma") {
-    alert("⚠️ Paciente possui alergia: " + t.alergia);
-  }
+    document.getElementById("paciente").value =
+        t.nome;
+
+    document.getElementById("obs").value =
+        t.observacao || "";
+
+
+    if (
+        t.alergia &&
+        t.alergia !== "Nenhuma"
+    ) {
+
+        alert(
+            "Paciente possui alergia: " +
+            t.alergia
+        );
+
+    }
+
 }
+
 
 function carregarMedicacoes() {
-  fetch("/lista-medicacoes")
-    .then(r => r.json())
-    .then(data => {
-      const select = document.getElementById("medicacao");
 
-      select.innerHTML = `
-        <option value="">Selecione a medicação</option>
-      `;
+    fetch("/lista-medicacoes")
 
-      data.forEach(med => {
-        const option = document.createElement("option");
-        option.value = med;
-        option.textContent = med;
-        select.appendChild(option);
-      });
-    });
+        .then(r => r.json())
+
+        .then(data => {
+
+            const select =
+                document.getElementById("medicacao");
+
+            select.innerHTML = `
+                <option value="">
+                    Selecione a medicação
+                </option>
+            `;
+
+
+            data.forEach(med => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = med;
+                option.textContent = med;
+
+                select.appendChild(option);
+
+            });
+
+        });
+
 }
+
 
 function salvar() {
-  const paciente = document.getElementById("paciente").value;
-  const diagnostico = document.getElementById("diagnostico").value;
-  const medicacao = document.getElementById("medicacao").value;
-  const obs = document.getElementById("obs").value;
 
-  if (!paciente) {
-    alert("Selecione um paciente clicando em Atender.");
-    return;
-  }
+    const paciente =
+        document.getElementById("paciente").value;
 
-  if (!medicacao) {
-    alert("Selecione uma medicação.");
-    return;
-  }
+    const diagnostico =
+        document.getElementById("diagnostico").value;
 
-  fetch("/consulta", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      paciente,
-      diagnostico,
-      medicacao,
-      obs
+    const medicacao =
+        document.getElementById("medicacao").value;
+
+    const obs =
+        document.getElementById("obs").value;
+
+
+    if (!paciente) {
+
+        alert(
+            "Selecione um paciente clicando em Atender."
+        );
+
+        return;
+
+    }
+
+
+    if (!diagnostico) {
+
+        alert(
+            "Digite o diagnóstico."
+        );
+
+        return;
+
+    }
+
+
+    if (!medicacao) {
+
+        alert(
+            "Selecione uma medicação."
+        );
+
+        return;
+
+    }
+
+
+    fetch("/consulta", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            paciente,
+            diagnostico,
+            medicacao,
+            obs
+
+        })
+
     })
-  })
-  .then(r => r.json())
-  .then(() => {
-    alert("Consulta salva");
 
-    document.getElementById("diagnostico").value = "";
-    document.getElementById("medicacao").value = "";
-    document.getElementById("obs").value = "";
-  });
+    .then(r => r.json())
+
+    .then(data => {
+
+        alert("Consulta salva.");
+
+        document.getElementById("paciente").value = "";
+        document.getElementById("diagnostico").value = "";
+        document.getElementById("medicacao").value = "";
+        document.getElementById("obs").value = "";
+
+        carregar();
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+        alert("Erro ao salvar consulta.");
+
+    });
+
 }
+
 
 carregar();
 carregarMedicacoes();
