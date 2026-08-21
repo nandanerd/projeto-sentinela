@@ -146,7 +146,7 @@ app.get("/medicacoes", (req, res) => {
 });
 
 // START
-const PORT = process.eny.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.isten(PORT, () => {
   console.log(`Porta ${PORT}`);
 });
