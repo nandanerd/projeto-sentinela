@@ -148,5 +148,5 @@ app.get("/medicacoes", (req, res) => {
 // START
 const PORT = process.eny.PORT || 3000;
 app.isten(PORT, () => {
-  console.log(´Porta ${PORT}´)};
+  console.log(`Porta ${PORT}`);
 });
