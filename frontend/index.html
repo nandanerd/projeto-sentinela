@@ -1,33 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Inova Saúde</title>
+
+    <!-- Link do CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-<div class="container">
-  <h2>🏥 Sistema Hospitalar</h2>
-  <input id="usuario" placeholder="Usuário">
-  <input id="senha" type="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
+
+    <div class="card">
+        <img src="logo.png" class="logo" alt="Logo">
+
+        <h1>Bem-vindo</h1>
+        <p>Acesso ao sistema do Hospital Inova Saúde</p>
+
+        <form>
+          <div class="input-group">
+    <input type="text" id="usuario" required>
+    <label>Usuário</label>
 </div>
 
+<div class="input-group">
+    <input type="password" id="senha" required>
+    <label>Senha</label>
+</div>
+          <button type="button" onclick="login()">Entrar</button>
+        </form>
 <script>
 function login() {
-  fetch("http://localhost:3000/login", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      usuario: usuario.value,
-      senha: senha.value
+
+    const usuario = document.getElementById("usuario").value;
+    const senha = document.getElementById("senha").value;
+
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            usuario: usuario.value,
+            senha: senha.value
+        })
     })
-  })
-  .then(r => r.json())
-  .then(data => {
-    if(data.tipo === "triagem") location.href = "triagem.html";
-    if(data.tipo === "medico") location.href = "medico.html";
-    if(data.tipo === "atendimento") location.href = "atendimento.html";
-  });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Usuário ou senha inválidos");
+        }
+        return response.json();
+    })
+    .then(data => {
+
+        console.log(data);
+
+        if (data.tipo === "triagem") location.href = "triagem.html";
+        if (data.tipo === "medico") location.href = "medico.html";
+        if (data.tipo === "atendimento") location.href = "atendimento.html";
+         {
+            alert("Tipo de usuário inválido.");
+        }
+
+    })
+    .catch(error => {
+        alert(error.message);
+        console.error(error);
+    });
+
 }
 </script>
+        <div class="footer">
+            © 2026 Hospital Inova Saúde
+        </div>
+    </div>
+
 </body>
 </html>
