@@ -5,35 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Inova Saúde</title>
 
-    <!-- Link do CSS -->
-  <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
-    <div class="card">
-        <img src="logo.png" class="logo" alt="Logo">
+<div class="card">
 
-        <h1>Bem-vindo</h1>
-        <p>Acesso ao sistema do Hospital Inova Saúde</p>
+    <img src="logo.png" class="logo" alt="Logo">
 
-        <form>
-          <div class="input-group">
-    <input type="text" id="usuario" required>
-    <label>Usuário</label>
+    <h1>Bem-vindo</h1>
+
+    <p>Acesso ao sistema do Hospital Inova Saúde</p>
+
+    <form onsubmit="login(); return false;">
+
+        <div class="input-group">
+            <input type="text" id="usuario" required>
+            <label>Usuário</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="senha" required>
+            <label>Senha</label>
+        </div>
+
+        <button type="submit">Entrar</button>
+
+    </form>
+
+    <div class="footer">
+        © 2026 Hospital Inova Saúde
+    </div>
+
 </div>
 
-<div class="input-group">
-    <input type="password" id="senha" required>
-    <label>Senha</label>
-</div>
-          <button type="button" onclick="login()">Entrar</button>
-        </form>
 <script>
+
 function login() {
 
-    const usuario = document.getElementById("usuario").value;
-    const senha = document.getElementById("senha").value;
+    const usuario = document.getElementById("usuario").value.trim();
+    const senha = document.getElementById("senha").value.trim();
 
     fetch("/login", {
         method: "POST",
@@ -41,39 +53,55 @@ function login() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            usuario: usuario.value,
-            senha: senha.value
+            usuario: usuario,
+            senha: senha
         })
     })
+
     .then(response => {
+
         if (!response.ok) {
             throw new Error("Usuário ou senha inválidos");
         }
+
         return response.json();
+
     })
+
     .then(data => {
 
-        console.log(data);
+        console.log("Login realizado:", data);
 
-        if (data.tipo === "triagem") location.href = "triagem.html";
-        if (data.tipo === "medico") location.href = "medico.html";
-        if (data.tipo === "atendimento") location.href = "atendimento.html";
-         {
+        if (data.tipo === "triagem") {
+
+            window.location.href = "triagem.html";
+
+        } else if (data.tipo === "medico") {
+
+            window.location.href = "medico.html";
+
+        } else if (data.tipo === "atendimento") {
+
+            window.location.href = "atendimento.html";
+
+        } else {
+
             alert("Tipo de usuário inválido.");
+
         }
 
     })
+
     .catch(error => {
-        alert(error.message);
+
         console.error(error);
+        alert(error.message);
+
     });
 
 }
+
 </script>
-        <div class="footer">
-            © 2026 Hospital Inova Saúde
-        </div>
-    </div>
 
 </body>
 </html>
